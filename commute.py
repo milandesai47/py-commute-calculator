@@ -1,5 +1,6 @@
 import json
 from datetime import datetime
+from datetime import time
 from collections import namedtuple
 from itertools import takewhile
 from geopy.distance import geodesic
@@ -7,18 +8,6 @@ from itertools import groupby
 from matplotlib import pyplot
 import sys
 import pandas as pd
-
-# with open('Location History.json') as json_file:
-#   data = json.load(json_file)
-#   for p in data['locations']:
-#     dtm = p['timestampMs']
-#     dtm2 = int(dtm)
-#     dateandtime = datetime.fromtimestamp(dtm2/1000)
-#     print('Date Time : ')
-#     print(dateandtime)
-#
-#     print(p['latitudeE7'] / 10 ** 7)
-#     print(p['longitudeE7'] / 10 ** 7)
 
 Point = namedtuple('Point', 'latitude, longitude, datetime' )
 
@@ -94,10 +83,10 @@ normalised = [commute for commute in commutes
 #create a sample graph
 fig, ax = pyplot.subplots()
 ax.grid()
-ax.scatter([commute.day for commute in normalised],
+ax.scatter([commute.start.time() for commute in normalised],
             [commute.took.total_seconds() / 60 for commute in normalised])
 
-ax.set(xlabel='day', ylabel='commute (minutes)',
+ax.set(xlabel='time', ylabel='commute (minutes)',
         title='Daily commute')
 ax.grid()
 pyplot.show()
