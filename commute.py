@@ -6,6 +6,7 @@ from geopy.distance import geodesic
 from itertools import groupby
 from matplotlib import pyplot
 import sys
+import pandas as pd
 
 # with open('Location History.json') as json_file:
 #   data = json.load(json_file)
@@ -82,7 +83,7 @@ def get_commute_to_work():
     if end is None:
       continue
 
-    yield Commute_to_work(day, start.datetime, end.datetime, end.datetime - start.datetime)
+    yield Commute_to_work(pd.to_datetime(start.datetime).weekday_name, start.datetime, end.datetime, end.datetime - start.datetime)
 
 
 commutes = [*get_commute_to_work()][::-1]
