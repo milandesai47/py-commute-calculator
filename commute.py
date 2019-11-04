@@ -40,7 +40,7 @@ after_move = takewhile(lambda point: point.datetime >= from_date,points)
 work_days = (point for point in after_move
              if point.datetime.weekday() < 5)
 
-from_home = 8.30
+from_home = 8.15
 reahced_to_work = 10
 
 commute_time_to_work = (point for point in work_days
@@ -86,12 +86,14 @@ def get_commute_to_work():
 
 commutes = [*get_commute_to_work()][::-1]
 
+normalised = [commute for commute in commutes
+              if(commute.took.total_seconds()) < 60 * 60]
 #create a sample graph
 fig, ax = pyplot.subplots()
-ax.plot([commute.day for commute in commutes],
-        [commute.took.total_seconds() / 60 for commute in commutes])
+ax.plot([commute.day for commute in normalised],
+        [commute.took.total_seconds() / 60 for commute in normalised])
 
-ax.set(xlabel='day', ylabel='commute (minutes)',
+ax.set(xlabel='date', ylabel='commute (minutes)',
        title='Daily commute')
 ax.grid()
 pyplot.show()
