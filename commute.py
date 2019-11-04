@@ -47,7 +47,7 @@ commute_time_to_work = (point for point in work_days
                         if from_home <= point.datetime.hour < reahced_to_work)
 
 #print(*commute_time_to_home)
-by_days_to_work = groupby(commute_time_to_work, key=lambda point: point.datetime.date())
+by_days_to_work = groupby(commute_time_to_work, key=lambda point: point.datetime.weekday())
 
 home = (51.4097548, -2.5509183)
 work = (51.5423741, -2.5736942)
@@ -84,14 +84,19 @@ def get_commute_to_work():
 
     yield Commute_to_work(day, start.datetime, end.datetime, end.datetime - start.datetime)
 
+
 commutes = [*get_commute_to_work()][::-1]
+
+normalised = [commute for commute in commutes
+              if commute.took.total_seconds() < 60 * 60]
 
 #create a sample graph
 fig, ax = pyplot.subplots()
-ax.plot([commute.day for commute in commutes],
-        [commute.took.total_seconds() / 60 for commute in commutes])
+ax.grid()
+ax.scatter([commute.day for commute in normalised],
+            [commute.took.total_seconds() / 60 for commute in normalised])
 
 ax.set(xlabel='day', ylabel='commute (minutes)',
-       title='Daily commute')
+        title='Daily commute')
 ax.grid()
 pyplot.show()
