@@ -81,8 +81,8 @@ normalised = [commute for commute in commutes
 #create a sample graph
 fig, ax = pyplot.subplots(subplot_kw={'projection': '3d'})
 ax.grid()
-ax.scatter([commute.day.weekday() for commute in normalised],
-           [commute.day.strftime("%m") for commute in normalised],
+ax.scatter([commute.day.isoweekday() for commute in normalised],
+           [commute.day.month for commute in normalised],
            [commute.took.total_seconds() / 60 for commute in normalised])
 
 ax.set(xlabel='Day',ylabel='Month' ,zlabel='commute (minutes)',
