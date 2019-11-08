@@ -6,6 +6,8 @@ from geopy.distance import geodesic
 from itertools import groupby
 from matplotlib import pyplot
 import sys
+import pandas as pd
+from mpl_toolkits.mplot3d import Axes3D
 
 Point = namedtuple('Point', 'latitude, longitude, datetime' )
 
@@ -70,18 +72,20 @@ def get_commute_to_work():
     if end is None:
       continue
 
-    yield Commute_to_work(day.strftime("%b"), start.datetime, end.datetime, end.datetime - start.datetime)
+    yield Commute_to_work(pd.to_datetime(start.datetime), start.datetime, end.datetime, end.datetime - start.datetime)
 
 commutes = [*get_commute_to_work()][::-1]
 
 normalised = [commute for commute in commutes
               if(commute.took.total_seconds()) < 70 * 60]
 #create a sample graph
-fig, ax = pyplot.subplots()
-ax.scatter([commute.day for commute in normalised],
-        [commute.took.total_seconds() / 60 for commute in normalised])
-
-ax.set(xlabel='Month', ylabel='commute (minutes)',
-       title='Daily commute')
+fig, ax = pyplot.subplots(subplot_kw={'projection': '3d'})
 ax.grid()
+ax.scatter([commute.day.weekday() for commute in normalised],
+           [commute.day.strftime("%m") for commute in normalised],
+           [commute.took.total_seconds() / 60 for commute in normalised])
+
+ax.set(xlabel='Day',ylabel='Month' ,zlabel='commute (minutes)',
+       title='Daily commute')
+ax.legend()
 pyplot.show()
