@@ -7,18 +7,6 @@ from itertools import groupby
 from matplotlib import pyplot
 import sys
 
-# with open('Location History.json') as json_file:
-#   data = json.load(json_file)
-#   for p in data['locations']:
-#     dtm = p['timestampMs']
-#     dtm2 = int(dtm)
-#     dateandtime = datetime.fromtimestamp(dtm2/1000)
-#     print('Date Time : ')
-#     print(dateandtime)
-#
-#     print(p['latitudeE7'] / 10 ** 7)
-#     print(p['longitudeE7'] / 10 ** 7)
-
 Point = namedtuple('Point', 'latitude, longitude, datetime' )
 
 def read_points():
@@ -82,18 +70,18 @@ def get_commute_to_work():
     if end is None:
       continue
 
-    yield Commute_to_work(day, start.datetime, end.datetime, end.datetime - start.datetime)
+    yield Commute_to_work(day.strftime("%b"), start.datetime, end.datetime, end.datetime - start.datetime)
 
 commutes = [*get_commute_to_work()][::-1]
 
 normalised = [commute for commute in commutes
-              if(commute.took.total_seconds()) < 60 * 60]
+              if(commute.took.total_seconds()) < 70 * 60]
 #create a sample graph
 fig, ax = pyplot.subplots()
-ax.plot([commute.day for commute in normalised],
+ax.scatter([commute.day for commute in normalised],
         [commute.took.total_seconds() / 60 for commute in normalised])
 
-ax.set(xlabel='date', ylabel='commute (minutes)',
+ax.set(xlabel='Month', ylabel='commute (minutes)',
        title='Daily commute')
 ax.grid()
 pyplot.show()
